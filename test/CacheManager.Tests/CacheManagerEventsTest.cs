@@ -1,21 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using CacheManager.Core;
-using CacheManager.Core.Internal;
-using CacheManager.Core.Logging;
-using CacheManager.Core.Utility;
-using FluentAssertions;
-using StackExchange.Redis;
-using Xunit;
-
-namespace CacheManager.Tests
+﻿namespace CacheManager.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using CacheManager.Core;
+    using CacheManager.Core.Internal;
+    using CacheManager.Core.Logging;
+    using CacheManager.Core.Utility;
+    using FluentAssertions;
+    using StackExchange.Redis;
+    using Xunit;
+    using Xunit.Abstractions;
+    using static TestHelper;
+
     [ExcludeFromCodeCoverage]
     public class CacheManagerEventsTest
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public CacheManagerEventsTest(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
+        }
+
         [Fact]
         [ReplaceCulture]
         public void Events_CacheActionEventArgsCtor()
@@ -149,7 +158,13 @@ namespace CacheManager.Tests
 
         public class LongRunningEventTestBase
         {
-            public async Task<CacheItemRemovedEventArgs> RunTest(ICacheManagerConfiguration configuration, string useKey, string useRegion, bool endGetShouldBeNull = true, bool runGetWhileWaiting = true, bool expectValue = true)
+            public async Task<CacheItemRemovedEventArgs> RunTest(
+                ICacheManagerConfiguration configuration,
+                string useKey,
+                string useRegion,
+                bool endGetShouldBeNull = true,
+                bool runGetWhileWaiting = true,
+                bool expectValue = true)
             {
                 var triggered = false;
                 CacheItemRemovedEventArgs resultArgs = null;
@@ -223,8 +238,6 @@ namespace CacheManager.Tests
             }
         }
 
-#if !NETCOREAPP1
-
         // exclusive inner class for parallel exec of this long running test
         public class SystemRuntimeSpecific : LongRunningEventTestBase
         {
@@ -236,8 +249,8 @@ namespace CacheManager.Tests
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
-                string useRegion = "@_@23@_!!";
+                var useKey = Guid.NewGuid().ToString();
+                var useRegion = Guid.NewGuid().ToString();
                 var result = await RunTest(cfg, useKey, useRegion);
 
                 result.Reason.Should().Be(CacheItemRemovedReason.Expired);
@@ -257,7 +270,7 @@ namespace CacheManager.Tests
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
+                var useKey = Guid.NewGuid().ToString();
 
                 var result = await RunTest(cfg, useKey, null, true, false);
 
@@ -267,7 +280,6 @@ namespace CacheManager.Tests
                 result.Region.Should().BeNull();
             }
         }
-#endif
 
         // exclusive inner class for parallel exec of this long running test
         public class DictionarySpecific : LongRunningEventTestBase
@@ -280,8 +292,8 @@ namespace CacheManager.Tests
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
-                string useRegion = "@_@23@_!!";
+                var useKey = Guid.NewGuid().ToString();
+                var useRegion = Guid.NewGuid().ToString();
                 var result = await RunTest(cfg, useKey, useRegion, true, true);
 
                 result.Reason.Should().Be(CacheItemRemovedReason.Expired);
@@ -301,7 +313,7 @@ namespace CacheManager.Tests
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
+                var useKey = Guid.NewGuid().ToString();
 
                 var result = await RunTest(cfg, useKey, null, true, false);
 
@@ -323,8 +335,8 @@ namespace CacheManager.Tests
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
-                string useRegion = "@_@23@_!!";
+                var useKey = Guid.NewGuid().ToString();
+                var useRegion = Guid.NewGuid().ToString();
                 var result = await RunTest(cfg, useKey, useRegion);
 
                 result.Reason.Should().Be(CacheItemRemovedReason.Expired);
@@ -344,7 +356,7 @@ namespace CacheManager.Tests
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
+                var useKey = Guid.NewGuid().ToString();
 
                 // we cannot wait for the cache to expire it on its own, it only checks if you actually actively do something...
                 var result = await RunTest(cfg, useKey, null, true, true);
@@ -369,8 +381,8 @@ namespace CacheManager.Tests
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
-                string useRegion = "@_@23@_!!";
+                var useKey = Guid.NewGuid().ToString();
+                var useRegion = Guid.NewGuid().ToString();
                 var result = await RunTest(cfg, useKey, useRegion);
 
                 result.Reason.Should().Be(CacheItemRemovedReason.Expired);
@@ -390,7 +402,7 @@ namespace CacheManager.Tests
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
+                var useKey = Guid.NewGuid().ToString();
 
                 var result = await RunTest(cfg, useKey, null, true, false);
 
@@ -411,14 +423,14 @@ namespace CacheManager.Tests
             public async Task Events_Redis_ExpireTriggers()
             {
                 var cfg = new ConfigurationBuilder()
-                    .WithRedisConfiguration("redis", "localhost, allowAdmin=true", 0, true)
+                    .WithRedisConfiguration("redis", $"{TestManagers.RedisHost}:{TestManagers.RedisPort}, allowAdmin=true", 0, true)
                     .WithJsonSerializer()
                     .WithRedisCacheHandle("redis")
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
-                string useRegion = "@_@23@_!!";
+                var useKey = Guid.NewGuid().ToString();
+                var useRegion = Guid.NewGuid().ToString();
                 var result = await RunTest(cfg, useKey, useRegion, true, true, false);
 
                 result.Reason.Should().Be(CacheItemRemovedReason.Expired);
@@ -435,13 +447,13 @@ namespace CacheManager.Tests
                 var cfg = new ConfigurationBuilder()
                     .WithDictionaryHandle()
                     .And
-                    .WithRedisConfiguration("redis", "localhost, allowAdmin=true", 0, true)
+                    .WithRedisConfiguration("redis", $"{TestManagers.RedisHost}:{TestManagers.RedisPort}, allowAdmin=true", 0, true)
                     .WithJsonSerializer()
                     .WithRedisCacheHandle("redis")
                     .WithExpiration(ExpirationMode.Absolute, TimeSpan.FromSeconds(1))
                     .Build();
 
-                string useKey = Guid.NewGuid().ToString();
+                var useKey = Guid.NewGuid().ToString();
 
                 var result = await RunTest(cfg, useKey, null, true, false, false);
 
@@ -581,25 +593,40 @@ namespace CacheManager.Tests
                 .WithRedisCacheHandle("redis")
                 .Build();
 
-            var key = Guid.NewGuid().ToString();
             var onRemoveByHandleValid = false;
 
+            string key = null;
             var cache = new BaseCacheManager<int?>(config);
-            cache.OnRemoveByHandle += (s, args) =>
-            {
-                if (args.Reason == CacheItemRemovedReason.ExternalDelete
-                     && args.Key == key)
+
+            await RetryWithCondition(
+                5,
+                async () =>
                 {
-                    onRemoveByHandleValid = true;
-                }
-            };
+                    key = Guid.NewGuid().ToString();
+                    await WaitUntilCancel((source) =>
+                    {
+                        cache.OnRemoveByHandle += (s, args) =>
+                        {
+                            // check if the direct KeyDelete with 'client' fires the event. This works only with keyspace notifications...
+                            // if triggered, check the reason and validate the key
+                            if (args.Reason == CacheItemRemovedReason.ExternalDelete
+                                 && args.Key == key)
+                            {
+                                // signal triggered for assertion
+                                onRemoveByHandleValid = true;
+                                // cancel the wait helper task...
+                                source.Cancel(false);
+                            }
+                        };
 
-            cache.Add(key, 1234).Should().BeTrue();
-            var x = cache.Get(key);
+                        cache.Add(key, 1234).Should().BeTrue();
 
-            client.GetDatabase(0).KeyDelete(key);
+                        var x = cache.Get(key);
 
-            await Task.Delay(1000);
+                        client.GetDatabase(0).KeyDelete(key);
+                    });
+                },
+                () => onRemoveByHandleValid);
 
             onRemoveByHandleValid.Should().BeTrue("onRemoveByHandle Event should have been raised");
 
@@ -622,25 +649,37 @@ namespace CacheManager.Tests
                 .WithRedisCacheHandle("redis")
                 .Build();
 
-            var key = Guid.NewGuid().ToString();
+            string key = null;
             var onRemoveByHandleValid = false;
 
             var cache = new BaseCacheManager<int?>(config);
-            cache.OnRemoveByHandle += (s, args) =>
-            {
-                if (args.Reason == CacheItemRemovedReason.ExternalDelete
-                     && args.Key == key)
+
+            await RetryWithCondition(
+                5,
+                async () =>
                 {
-                    onRemoveByHandleValid = true;
-                }
-            };
+                    key = Guid.NewGuid().ToString();
+                    _testOutputHelper.WriteLine("Try with " + key);
+                    await WaitUntilCancel((source) =>
+                    {
+                        cache.OnRemoveByHandle += (s, args) =>
+                        {
+                            _testOutputHelper.WriteLine("event received " + args.Key);
+                            if (args.Reason == CacheItemRemovedReason.ExternalDelete
+                                 && args.Key == key)
+                            {
+                                onRemoveByHandleValid = true;
+                                source.Cancel();
+                            }
+                        };
 
-            cache.Add(key, 1234).Should().BeTrue();
-            var x = cache.Get(key);
+                        cache.Add(key, 1234).Should().BeTrue();
+                        var x = cache.Get(key);
 
-            client.GetDatabase(0).KeyDelete(key);
-
-            await Task.Delay(1000);
+                        client.GetDatabase(0).KeyDelete(key);
+                    });
+                },
+                () => onRemoveByHandleValid);
 
             onRemoveByHandleValid.Should().BeTrue("onRemoveByHandle Event should have been raised");
 

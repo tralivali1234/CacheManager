@@ -29,7 +29,7 @@ namespace CacheManager.Tests
             OnClearRegion
         }
 
-#if NETCOREAPP1 ||NETCOREAPP2
+#if NETCOREAPP2
         [Fact]
         public void Redis_WithoutSerializer_ShouldThrow()
         {
@@ -678,7 +678,6 @@ namespace CacheManager.Tests
             act.Should().Throw<InvalidOperationException>().WithMessage("*endpoints*");
         }
 
-#if !NETCOREAPP1
 #if !NO_APP_CONFIG
 
         [Fact]
@@ -779,13 +778,11 @@ namespace CacheManager.Tests
                     value.Should().Be("new value", cache.ToString());
                 },
                 1,
-                TestManagers.CreateRedisAndDicCacheWithBackplane(88, true, channelName, Serializer.Json),
-                TestManagers.CreateRedisAndDicCacheWithBackplane(88, true, channelName, Serializer.Json),
-                TestManagers.CreateRedisCache(88, false, Serializer.Json),
-                TestManagers.CreateRedisAndDicCacheWithBackplane(88, true, channelName, Serializer.Json));
+                TestManagers.CreateRedisAndDicCacheWithBackplane(50, true, channelName, Serializer.Json),
+                TestManagers.CreateRedisAndDicCacheWithBackplane(50, true, channelName, Serializer.Json),
+                TestManagers.CreateRedisCache(50, false, Serializer.Json),
+                TestManagers.CreateRedisAndDicCacheWithBackplane(50, true, channelName, Serializer.Json));
         }
-
-#endif
 
         [Fact(Skip = "needs clear")]
         [Trait("category", "Redis")]
@@ -810,10 +807,10 @@ namespace CacheManager.Tests
                     await Task.Delay(0);
                 },
                 2,
-                TestManagers.CreateRedisAndDicCacheWithBackplane(444, true, channelName),
-                TestManagers.CreateRedisAndDicCacheWithBackplane(444, true, channelName),
-                TestManagers.CreateRedisCache(444),
-                TestManagers.CreateRedisAndDicCacheWithBackplane(444, true, channelName));
+                TestManagers.CreateRedisAndDicCacheWithBackplane(51, true, channelName),
+                TestManagers.CreateRedisAndDicCacheWithBackplane(51, true, channelName),
+                TestManagers.CreateRedisCache(51),
+                TestManagers.CreateRedisAndDicCacheWithBackplane(51, true, channelName));
         }
 
         [Fact]
@@ -922,7 +919,7 @@ namespace CacheManager.Tests
         {
             using (var cache = CacheFactory.Build<RaceConditionTestElement>(settings =>
             {
-                settings.WithMaxRetries(int.MaxValue);
+                settings.WithMaxRetries(1);
                 settings.WithUpdateMode(CacheUpdateMode.Up)
                     .WithJsonSerializer()
                     .WithRedisCacheHandle("default")
@@ -947,7 +944,7 @@ namespace CacheManager.Tests
                 await ThreadTestHelper.RunAsync(
                     async () =>
                     {
-                        for (int i = 0; i < numInnerIterations; i++)
+                        for (var i = 0; i < numInnerIterations; i++)
                         {
                             cache.Update(
                                 key,
@@ -1044,8 +1041,6 @@ namespace CacheManager.Tests
 
             act.Should().NotThrow();
         }
-
-#if !NETCOREAPP1
 
         [Fact]
         [Trait("category", "Redis")]
@@ -1167,7 +1162,6 @@ namespace CacheManager.Tests
             redisConfig.ConnectionTimeout.Should().Be(11);
         }
 
-#endif
 #endif
 
         [Fact]
@@ -1471,10 +1465,7 @@ namespace CacheManager.Tests
         }
     }
 
-#if !NETCOREAPP1
-
     [Serializable]
-#endif
     [ExcludeFromCodeCoverage]
     [Bond.Schema]
     internal class Poco

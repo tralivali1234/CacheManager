@@ -1,5 +1,4 @@
-﻿#if !NETCOREAPP1
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CacheManager.Core;
@@ -72,6 +71,7 @@ namespace CacheManager.Tests
         }
 
 #if !NO_APP_CONFIG
+
         [Fact]
         [Trait("category", "NotOnMono")]
         public void Cfg_Valid_CfgFile_DefaultSysMemCache()
@@ -95,6 +95,7 @@ namespace CacheManager.Tests
             cache.CacheHandles.Count().Should().Be(1);
             AssertCacheHandleConfig(cache.CacheHandles.ElementAt(0), "default", ExpirationMode.Sliding, new TimeSpan(0, 5, 0));
         }
+
 #endif
 
         [Fact]
@@ -110,9 +111,9 @@ namespace CacheManager.Tests
 
             // assert
             cache.CacheHandles.Select(p => p.Configuration.EnableStatistics)
-                .Should().BeEquivalentTo(Enumerable.Repeat(true, cache.CacheHandles.Count()));
+                .Should().AllBeEquivalentTo(true);
             cache.CacheHandles.Select(p => p.Configuration.EnablePerformanceCounters)
-                .Should().BeEquivalentTo(Enumerable.Repeat(true, cache.CacheHandles.Count()));
+                .Should().AllBeEquivalentTo(true);
         }
 
         /// <summary>
@@ -132,9 +133,9 @@ namespace CacheManager.Tests
 
             // assert
             cache.CacheHandles.Select(p => p.Configuration.EnableStatistics)
-                .Should().BeEquivalentTo(Enumerable.Repeat(true, cache.CacheHandles.Count()));
+                .Should().AllBeEquivalentTo(true);
             cache.CacheHandles.Select(p => p.Configuration.EnablePerformanceCounters)
-                .Should().BeEquivalentTo(Enumerable.Repeat(false, cache.CacheHandles.Count()));
+                .Should().AllBeEquivalentTo(false);
         }
 
         [Fact]
@@ -150,9 +151,9 @@ namespace CacheManager.Tests
 
             // assert
             cache.CacheHandles.Select(p => p.Configuration.EnableStatistics)
-                .Should().BeEquivalentTo(Enumerable.Repeat(false, cache.CacheHandles.Count()));
+                .Should().AllBeEquivalentTo(false);
             cache.CacheHandles.Select(p => p.Configuration.EnablePerformanceCounters)
-                .Should().BeEquivalentTo(Enumerable.Repeat(false, cache.CacheHandles.Count()));
+                .Should().AllBeEquivalentTo(false);
         }
 
         [Fact]
@@ -187,4 +188,3 @@ namespace CacheManager.Tests
         }
     }
 }
-#endif

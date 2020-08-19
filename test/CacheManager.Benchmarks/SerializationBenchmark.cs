@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Text;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Environments;
-using BenchmarkDotNet.Jobs;
 using CacheManager.Core;
 using CacheManager.Core.Internal;
 using CacheManager.Serialization.Bond;
 using CacheManager.Serialization.Json;
 using CacheManager.Serialization.ProtoBuf;
-using Microsoft.Extensions.ObjectPool;
-using Newtonsoft.Json;
 
 namespace CacheManager.Benchmarks
 {

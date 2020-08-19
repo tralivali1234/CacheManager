@@ -1,5 +1,4 @@
-﻿#if !NETCOREAPP1
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CacheManager.Core;
@@ -158,6 +157,7 @@ namespace CacheManager.Tests
         }
 
 #if !NO_APP_CONFIG
+
         [Fact]
         [ReplaceCulture]
         [Trait("category", "NotOnMono")]
@@ -201,6 +201,7 @@ namespace CacheManager.Tests
             act.Should().Throw<ArgumentNullException>()
                 .WithMessage("*cacheValueType*");
         }
+
 #endif
 
         [Fact]
@@ -471,7 +472,7 @@ namespace CacheManager.Tests
         {
             // arrange
             var name = Guid.NewGuid().ToString();
-            var connection = "127.0.0.1:8080,allowAdmin=true,name=myName";
+            var connection = "127.0.0.1:8080,allowAdmin=true,name=myName,defaultDatabase=1";
             var expected = StackExchange.Redis.ConfigurationOptions.Parse(connection);
 
             // act
@@ -489,8 +490,9 @@ namespace CacheManager.Tests
             config.AllowAdmin.Should().BeTrue();
             config.IsSsl.Should().BeFalse();
             config.Key.Should().Be(name);
+            config.Database.Should().Be(1);
         }
-        
+
         [Fact]
         [ReplaceCulture]
         public void CacheFactory_Build_WithRedisConnectionStringWithProxy()
@@ -516,7 +518,6 @@ namespace CacheManager.Tests
             config.IsSsl.Should().BeTrue();
             config.Key.Should().Be(name);
         }
-
 
         [Fact]
         [ReplaceCulture]
@@ -607,7 +608,7 @@ namespace CacheManager.Tests
             act.CacheHandles.ElementAt(2).Configuration.ExpirationMode.Should().Be(ExpirationMode.Sliding);
             act.CacheHandles.ElementAt(2).Configuration.ExpirationTimeout.Should().Be(new TimeSpan(0, 0, 231));
         }
-        
+
         [Fact]
         [ReplaceCulture]
         [Trait("category", "NotOnMono")]
@@ -714,6 +715,7 @@ namespace CacheManager.Tests
         }
 
 #if !NETCOREAPP2
+
         [Fact]
         [ReplaceCulture]
         public void CacheFactory_Build_WithSerializer_SimpleBinary()
@@ -726,7 +728,7 @@ namespace CacheManager.Tests
             cache.Configuration.SerializerType.Should().NotBeNull();
             cache.Configuration.SerializerType.Should().Be(typeof(BinaryCacheSerializer));
         }
+
 #endif
     }
 }
-#endif

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using CacheManager.Core;
-using FluentAssertions;
-using Xunit;
-
-namespace CacheManager.Tests
+﻿namespace CacheManager.Tests
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using CacheManager.Core;
+    using FluentAssertions;
+    using Xunit;
+
     [ExcludeFromCodeCoverage]
     public class CacheManagerExpirationTest
     {
@@ -201,8 +201,6 @@ namespace CacheManager.Tests
             }
         }
 
-#if !NETCOREAPP1
-
         public class SysRuntime
         {
             [Fact]
@@ -239,8 +237,6 @@ namespace CacheManager.Tests
                 }
             }
         }
-
-#endif
 
         public class Redis
         {
@@ -1047,8 +1043,6 @@ namespace CacheManager.Tests
             act.Should().NotThrow();
         }
 
-#if !NETCOREAPP1
-
         [Fact]
         public void BaseCacheHandle_ExpirationInherits_Issue_1()
         {
@@ -1071,8 +1065,6 @@ namespace CacheManager.Tests
                 handles[1].GetCacheItem(key).ExpirationTimeout.Should().Be(default(TimeSpan));
             }
         }
-
-#endif
 
         private static void ValidateExistsInAllHandles<T>(ICacheManager<T> cache, string key)
         {

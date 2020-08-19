@@ -545,7 +545,7 @@ namespace CacheManager.Tests
         }
 
         [Fact]
-        public void BackplaneMessage_Mulitple()
+        public void BackplaneMessage_Multiple()
         {
             // arrange
             var owner = new byte[] { 1, 2, 3, 4 };
@@ -560,7 +560,7 @@ namespace CacheManager.Tests
         }
 
         [Fact]
-        public void BackplaneMessage_Mulitple_IgnoreOwner()
+        public void BackplaneMessage_Multiple_IgnoreOwner()
         {
             // arrange
             var owner = new byte[] { 1, 2, 3, 4 };
@@ -581,7 +581,7 @@ namespace CacheManager.Tests
             var region = Guid.NewGuid().ToString();
 
             // test hash compare works too, result hashset should still have 41 messages only!
-            for (var m = 0; m < 10000; m++)
+            for (var m = 0; m < 100; m++)
             {
                 for (var i = 0; i < 10; i++)
                 {

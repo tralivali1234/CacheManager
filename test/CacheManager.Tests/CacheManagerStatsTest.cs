@@ -51,12 +51,12 @@ namespace CacheManager.Tests
                 var handleCount = cache.CacheHandles.Count();
                 if (handleCount > 1)
                 {
-                    addCalls.Last().Should().Be(1);
-                    addCalls.Take(handleCount - 1).Should().AllBeEquivalentTo(0);
+                    addCalls.Last().Should().Be(1L);
+                    addCalls.Take(handleCount - 1).Should().AllBeEquivalentTo(0L);
                 }
                 else
                 {
-                    addCalls.Should().BeEquivalentTo(1);
+                    addCalls.Should().AllBeEquivalentTo(1L);
                 }
 
                 items.Should().BeEquivalentTo(
@@ -85,7 +85,7 @@ namespace CacheManager.Tests
 
                 // assert all handles should have 2 clear increases.
                 clears.Should().BeEquivalentTo(
-                    Enumerable.Repeat(2, cache.CacheHandles.Count()));
+                    Enumerable.Repeat(2L, cache.CacheHandles.Count()));
             }
         }
 
@@ -111,7 +111,7 @@ namespace CacheManager.Tests
 
                 // assert all handles should have 2 clearRegion increases.
                 clears.Should().BeEquivalentTo(
-                    Enumerable.Repeat(2, cache.CacheHandles.Count()));
+                    Enumerable.Repeat(2L, cache.CacheHandles.Count()));
             }
         }
 
@@ -136,7 +136,7 @@ namespace CacheManager.Tests
 
                 // assert all handles should have 2 clearRegion increases.
                 puts.Should().BeEquivalentTo(
-                    Enumerable.Repeat(3, cache.CacheHandles.Count()));
+                    Enumerable.Repeat(3L, cache.CacheHandles.Count()));
             }
         }
 
@@ -161,9 +161,9 @@ namespace CacheManager.Tests
                 cache.Update(key1, v => "somethingelse");
                 cache.Update(key2, v => "somethingelse");
 
-                // assert could be more than 2 adds.Should().BeEquivalentTo( Enumerable.Repeat(0,
-                // cache.CacheHandles.Count)); gets.Should().BeEquivalentTo( Enumerable.Repeat(2,
-                // cache.CacheHandles.Count)); hits.Should().BeEquivalentTo( Enumerable.Repeat(2, cache.CacheHandles.Count));
+                // assert could be more than 2 adds.Should().AllBeEquivalentTo( Enumerable.Repeat(0,
+                // cache.CacheHandles.Count)); gets.Should().AllBeEquivalentTo( Enumerable.Repeat(2,
+                // cache.CacheHandles.Count)); hits.Should().AllBeEquivalentTo( Enumerable.Repeat(2, cache.CacheHandles.Count));
             }
         }
 
@@ -245,7 +245,7 @@ namespace CacheManager.Tests
             await Task.Delay(20);
             putCounter.Should().Be(threads * iterations);
             puts.Should().BeEquivalentTo(
-                    Enumerable.Repeat(threads * iterations, cache.CacheHandles.Count()));
+                    Enumerable.Repeat((long)(threads * iterations), cache.CacheHandles.Count()));
         }
     }
 }

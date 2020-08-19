@@ -1806,23 +1806,23 @@ namespace CacheManager.Tests
 
                 // act
                 PopulateCache(cache, keys, values, 1);
-                string strSomething = cache.Get<string>(keys[0]);
-                int someNumber = cache.Get<int>(keys[1]);
-                float someFloating = cache.Get<float>(keys[2]);
-                double someDoubling = cache.Get<double>(keys[3]);
-                long someLonging = cache.Get<long>(keys[4]);
-                bool someBooling = cache.Get<bool>(keys[5]);
-                ComplexType obj = cache.Get<ComplexType>(keys[6]);
+                object strSomething = cache.Get<string>(keys[0]);
+                object someNumber = cache.Get<int>(keys[1]);
+                object someFloating = cache.Get<float>(keys[2]);
+                object someDoubling = cache.Get<double>(keys[3]);
+                object someLonging = cache.Get<long>(keys[4]);
+                object someBooling = cache.Get<bool>(keys[5]);
+                object obj = cache.Get<ComplexType>(keys[6]);
                 object someObject = cache.Get<object>("nonexistent");
 
                 // assert
                 ValidateCacheValues(cache, keys, values);
-                strSomething.Should().BeEquivalentTo((string)values[0]);
-                someNumber.Should().Be((int)values[1]);
-                someFloating.Should().Be((float)values[2]);
-                someDoubling.Should().Be((double)values[3]);
-                someLonging.Should().Be((long)values[4]);
-                someBooling.Should().Be((bool)values[5]);
+                strSomething.Should().BeEquivalentTo(values[0]);
+                someNumber.Should().BeEquivalentTo(values[1]);
+                someFloating.Should().BeEquivalentTo(values[2]);
+                someDoubling.Should().BeEquivalentTo(values[3]);
+                someLonging.Should().BeEquivalentTo(values[4]);
+                someBooling.Should().BeEquivalentTo(values[5]);
                 obj.Should().BeEquivalentTo(values[6]);
                 someObject.Should().Be(null);
             }
@@ -2096,10 +2096,7 @@ namespace CacheManager.Tests
             }).ToList();
         }
 
-#if !NETCOREAPP1
-
         [Serializable]
-#endif
         [ProtoBuf.ProtoContract]
         [Bond.Schema]
         public class ComplexType

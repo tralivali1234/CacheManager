@@ -57,7 +57,6 @@ namespace CacheManager.Tests
             act.Should().Throw<ArgumentException>().WithMessage("*value must be greater*");
         }
 
-
         [Fact]
         public void CacheItemValidation_WithSlidingExpiration_Invalid()
         {
@@ -93,11 +92,11 @@ namespace CacheManager.Tests
             var result = baseItem.WithCreated(created);
 
             // assert
-            result.CreatedUtc.Should().Be(created);
+            result.CreatedUtc.Should().BeCloseTo(created);
             result.Value.Should().Be(baseItem.Value);
             result.Region.Should().Be(baseItem.Region);
             result.Key.Should().Be(baseItem.Key);
-            result.LastAccessedUtc.Should().Be(baseItem.LastAccessedUtc);
+            result.LastAccessedUtc.Should().BeCloseTo(baseItem.LastAccessedUtc);
             result.ExpirationMode.Should().Be(baseItem.ExpirationMode);
             result.ExpirationTimeout.Should().Be(baseItem.ExpirationTimeout);
         }
@@ -117,8 +116,8 @@ namespace CacheManager.Tests
             result.Value.Should().Be(baseItem.Value);
             result.Region.Should().Be(baseItem.Region);
             result.Key.Should().Be(baseItem.Key);
-            result.CreatedUtc.Should().Be(baseItem.CreatedUtc);
-            result.LastAccessedUtc.Should().Be(baseItem.LastAccessedUtc);
+            result.CreatedUtc.Should().BeCloseTo(baseItem.CreatedUtc);
+            result.LastAccessedUtc.Should().BeCloseTo(baseItem.LastAccessedUtc);
         }
 
         [Fact]
@@ -136,8 +135,8 @@ namespace CacheManager.Tests
             result.Value.Should().Be(baseItem.Value);
             result.Region.Should().Be(baseItem.Region);
             result.Key.Should().Be(baseItem.Key);
-            result.CreatedUtc.Should().Be(baseItem.CreatedUtc);
-            result.LastAccessedUtc.Should().Be(baseItem.LastAccessedUtc);
+            result.CreatedUtc.Should().BeCloseTo(baseItem.CreatedUtc);
+            result.LastAccessedUtc.Should().BeCloseTo(baseItem.LastAccessedUtc);
         }
 
         [Fact]
@@ -156,8 +155,8 @@ namespace CacheManager.Tests
             result.Value.Should().Be(baseItem.Value);
             result.Region.Should().Be(baseItem.Region);
             result.Key.Should().Be(baseItem.Key);
-            result.CreatedUtc.Should().Be(result.CreatedUtc); // !! Changed due to issue #136
-            result.LastAccessedUtc.Should().Be(baseItem.LastAccessedUtc);
+            result.CreatedUtc.Should().BeCloseTo(result.CreatedUtc); // !! Changed due to issue #136
+            result.LastAccessedUtc.Should().BeCloseTo(baseItem.LastAccessedUtc);
         }
 
         [Fact]
@@ -175,8 +174,8 @@ namespace CacheManager.Tests
             result.Value.Should().Be(baseItem.Value);
             result.Region.Should().Be(baseItem.Region);
             result.Key.Should().Be(baseItem.Key);
-            result.CreatedUtc.Should().Be(baseItem.CreatedUtc);
-            result.LastAccessedUtc.Should().Be(baseItem.LastAccessedUtc);
+            result.CreatedUtc.Should().BeCloseTo(baseItem.CreatedUtc);
+            result.LastAccessedUtc.Should().BeCloseTo(baseItem.LastAccessedUtc);
         }
 
         [Fact]
@@ -194,8 +193,8 @@ namespace CacheManager.Tests
             result.Value.Should().Be(baseItem.Value);
             result.Region.Should().Be(baseItem.Region);
             result.Key.Should().Be(baseItem.Key);
-            result.CreatedUtc.Should().Be(baseItem.CreatedUtc);
-            result.LastAccessedUtc.Should().Be(baseItem.LastAccessedUtc);
+            result.CreatedUtc.Should().BeCloseTo(baseItem.CreatedUtc);
+            result.LastAccessedUtc.Should().BeCloseTo(baseItem.LastAccessedUtc);
         }
 
         [Fact]
@@ -211,8 +210,8 @@ namespace CacheManager.Tests
             result.Value.Should().Be("new value");
             result.Region.Should().Be(baseItem.Region);
             result.Key.Should().Be(baseItem.Key);
-            result.CreatedUtc.Should().Be(baseItem.CreatedUtc);
-            result.LastAccessedUtc.Should().Be(baseItem.LastAccessedUtc);
+            result.CreatedUtc.Should().BeCloseTo(baseItem.CreatedUtc);
+            result.LastAccessedUtc.Should().BeCloseTo(baseItem.LastAccessedUtc);
             result.ExpirationMode.Should().Be(baseItem.ExpirationMode);
             result.ExpirationTimeout.Should().Be(baseItem.ExpirationTimeout);
         }

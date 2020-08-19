@@ -194,13 +194,13 @@ namespace Microsoft.Extensions.Configuration
                 catch (FileNotFoundException ex)
                 {
                     throw new InvalidOperationException(
-                        "Redis types could not be loaded. Make sure that you have the CacheManager.Redis.Stackexchange package installed.",
+                        "Redis types could not be loaded. Make sure that you have the CacheManager.Stackexchange.Redis package installed.",
                         ex);
                 }
                 catch (TypeLoadException ex)
                 {
                     throw new InvalidOperationException(
-                        "Redis types could not be loaded. Make sure that you have the CacheManager.Redis.Stackexchange package installed.",
+                        "Redis types could not be loaded. Make sure that you have the CacheManager.Stackexchange.Redis package installed.",
                         ex);
                 }
             }
@@ -461,12 +461,15 @@ namespace Microsoft.Extensions.Configuration
             {
                 switch (knownTypeName.ToLowerInvariant())
                 {
+#if !NET461
                     case KnonwSerializerBinary:
-#if NETSTANDARD
                         throw new PlatformNotSupportedException("BinaryCacheSerializer is not available on this platform");
 #else
+                    case KnonwSerializerBinary:
                         return typeof(BinaryCacheSerializer);
+
 #endif
+
                     case KnonwSerializerJson:
                         return Type.GetType(TypeJsonCacheSerializer, true);
 
